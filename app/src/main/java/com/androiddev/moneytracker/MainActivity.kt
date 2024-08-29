@@ -9,7 +9,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.androiddev.moneytracker.databinding.ActivityMainBinding
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
     val messagesList = ArrayList<Messages>()
@@ -26,12 +30,9 @@ class MainActivity : AppCompatActivity() {
         binding.btnFetch.setOnClickListener {
             if (checkSmsPermission()) {
                 fetchAllSms()
-                messagesList.forEach { messages ->
-                    Log.d(
-                        "MYTAG",
-                        "onCreate: phoneno ${messages.number}  body ${messages.body} date ${messages.smsDate}"
-                    )
-                }
+                val adapter = MessageAdapter(messagesList)
+                binding.recyclerview.layoutManager = LinearLayoutManager(this)
+                binding.recyclerview.adapter = adapter
             } else {
                 requestSmsPermission()
             }
@@ -54,7 +55,6 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-
     private fun fetchAllSms() {
         val uri = Telephony.Sms.CONTENT_URI
         val projection = arrayOf(Telephony.Sms.ADDRESS, Telephony.Sms.BODY, Telephony.Sms.DATE)
@@ -67,8 +67,11 @@ class MainActivity : AppCompatActivity() {
                     val phoneNo =
                         cursor.getString(cursor.getColumnIndexOrThrow(Telephony.Sms.ADDRESS))
                     val body = cursor.getString(cursor.getColumnIndexOrThrow(Telephony.Sms.BODY))
-                    val date = cursor.getLong(cursor.getColumnIndexOrThrow(Telephony.Sms.DATE))
-                    val msg = Messages(phoneNo, date.toString(), body)
+                    val datedata = cursor.getLong(cursor.getColumnIndexOrThrow(Telephony.Sms.DATE))
+                    val date = Date(datedata)
+                    val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                    val formattedDate = dateFormat.format(date)
+                    val msg = Messages(phoneNo, formattedDate, body)
                     messagesList.add(msg)
                 } while (cursor.moveToNext())
             }
