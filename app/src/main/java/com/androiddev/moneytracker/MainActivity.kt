@@ -15,6 +15,8 @@ class MainActivity : AppCompatActivity() {
     val messagesList = ArrayList<Messages>()
     lateinit var binding: ActivityMainBinding
 
+    val msgList = ArrayList<MessagesModel>()
+
     private val SMS_PERMISSION_CODE = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.btnFetch.setOnClickListener {
-            if (checkSmsPermission()) {
+            /*if (checkSmsPermission()) {
                 fetchAllSms()
                 messagesList.forEach { messages ->
                     Log.d(
@@ -32,12 +34,13 @@ class MainActivity : AppCompatActivity() {
                         "onCreate: phoneno ${messages.number}  body ${messages.body} date ${messages.smsDate}"
                     )
                 }
-            } else {
-                requestSmsPermission()
-            }
+            } else requestSmsPermission()
+            */
         }
-
     }
+
+
+
 
     private fun checkSmsPermission(): Boolean {
         return ContextCompat.checkSelfPermission(
