@@ -17,6 +17,8 @@ import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
     val messagesList = ArrayList<Messages>()
+    val creditMessages = mutableListOf<Messages>()
+    val debitMessages = mutableListOf<Messages>()
     lateinit var binding: ActivityMainBinding
 
     private val SMS_PERMISSION_CODE = 1
@@ -27,16 +29,27 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.btnFetch.setOnClickListener {
+        binding.btnCreditms.setOnClickListener {
             if (checkSmsPermission()) {
                 fetchAllSms()
-                val adapter = MessageAdapter(messagesList)
+                val adapter = MessageAdapter(creditMessages)
                 binding.recyclerview.layoutManager = LinearLayoutManager(this)
                 binding.recyclerview.adapter = adapter
             } else {
                 requestSmsPermission()
             }
         }
+        binding.btnDebitmsg.setOnClickListener {
+            if (checkSmsPermission()) {
+                fetchAllSms()
+                val adapter = MessageAdapter(debitMessages)
+                binding.recyclerview.layoutManager = LinearLayoutManager(this)
+                binding.recyclerview.adapter = adapter
+            } else {
+                requestSmsPermission()
+            }
+        }
+
 
     }
 
@@ -72,9 +85,22 @@ class MainActivity : AppCompatActivity() {
                     val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
                     val formattedDate = dateFormat.format(date)
                     val msg = Messages(phoneNo, formattedDate, body)
-                    messagesList.add(msg)
+                    when {
+                        body.contains("credited", ignoreCase = true) -> creditMessages.add(msg)
+                        body.contains("debited", ignoreCase = true) || body.contains("Sent", ignoreCase = true) -> debitMessages.add(msg)
+                    }
                 } while (cursor.moveToNext())
             }
+        }
+
+        displayMessages("Credit", creditMessages)
+        displayMessages("Debit", debitMessages)
+    }
+
+    private fun displayMessages(s: String, debitMessages: List<Messages>) {
+        Log.d("SMS", "---- $s Messages ----")
+        debitMessages.forEach { message ->
+            Log.d("SMS", "Phone No: ${message.number}, Date: ${message.date}, Body: ${message.sms}")
         }
     }
 

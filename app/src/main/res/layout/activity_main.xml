@@ -6,11 +6,27 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/btnFetch"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Fetch SMS From Local Device" />
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnDebitmsg"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Fetch Debit sms" />
+
+        <Button
+            android:id="@+id/btnCreditms"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Fetch Credit sms" />
+
+
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview"
